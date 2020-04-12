@@ -99,15 +99,17 @@ pvfields=AC Power,grid frequency,DC input voltage,daily yield,total yield,Power 
 
 # How frequently to send updates over (defaults to 20 sec)
 min_update=30
-#debug output
+# debug output
 debug=1
 
-#inverter connection
-inv_host = <inverter-ip>
-inv_port = 502
-inv_modbus_id = 3
-inv_manufacturer = SMA
-#['address', 'type', 'format', 'description', 'unit', 'value']
+# inverter connection
+# ['host', 'port', 'modbus_id', 'manufacturer']
+inverters = [
+    ['<inverter-ip>', '502', '3', 'SMA'],
+    ['<inverter-ip', '502', '3', 'SMA']
+    ]
+
+# ['address', 'type', 'format', 'description', 'unit', 'value']
 registers = [
     ['30057', 'U32', 'RAW', 'serial', ''],
     ['30201','U32','ENUM','Status',''],
