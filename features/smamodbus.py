@@ -376,13 +376,8 @@ pvenums = {
         9317: 'SB 5400TL-JP-22'
     }
 }
-def get_pv_data(config):
+def get_pv_data(host, port, modbusid, registers):
 
-    host = config.get('inv_host')
-    port = config.get('inv_port', 502)
-    modbusid = config.get('inv_modbus', 3)
-    manufacturer = config.get('inv_modbus', 'Default')
-    registers = eval(config.get('registers'))
     client = ModbusClient(host=host, port=port)
     try:
         client.connect()
