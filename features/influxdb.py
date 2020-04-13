@@ -120,7 +120,10 @@ def run(emparts,config):
     pvpower=0
     try:
         from features.pvdata import pv_data
-        pvpower = pv_data.get("AC Power")
+
+        for inv in pv_data:
+            pvpower += inv.get("AC Power")
+
         if pvpower is None: pvpower=0
         pconsume = emparts.get('pconsume', 0)
         psupply = emparts.get('psupply', 0)
@@ -152,20 +155,25 @@ def run(emparts,config):
     pvmeasurement=config.get('pvmeasurement')
     if None in [pvfields,pv_data,pvmeasurement]: return
 
-    influx_data = {}
-    data={}
-    influx_data['measurement'] = pvmeasurement
-    influx_data['time'] = now
-    pvserial=pv_data.get('serial')
-    influx_data['tags'] = {}
-    influx_data['tags']["serial"] = pvserial
-    #unly if we have values
-    if pvpower is not None:
-        for f in pvfields.split(','):
-            data[f] = pv_data.get(f,0)
+    influx_data = []
+    datapoint={
+            'measurement': pvmeasurement,
+            'time': now
+            }
+    fields = {}
+    for inv in pv_data:
+        datapoint['tags'] = {'serial': inv.get('serial')}
+        inv.pop('serial')
 
-    influx_data['fields'] = data
-    points=[influx_data]
+        # only if we have values
+        if pvpower is not None:
+            for f in pvfields.split(','):
+                fields[f] = inv.get(f, 0)
+
+        datapoint['fields'] = fields.copy()
+        influx_data.append(datapoint.copy())
+
+    points=influx_data
 
     #send it
     try:
