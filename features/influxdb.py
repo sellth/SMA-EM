@@ -67,7 +67,7 @@ def run(emparts,config):
     password = config.get('password',None )
     mesurement= config.get('measurement','SMAEM' )
     fields = config.get('fields', 'pconsume,psupply')
-    pvfields=config.get('pvfields')
+    pvfields=eval(config.get('pvfields'))
     influx=None
     #connect to db, create one if needed
     try:
@@ -131,7 +131,6 @@ def run(emparts,config):
         data['pvpower'] = pvpower
         data['pusage'] = pusage
     except:
-        pv_data = None
         pass
 
     influx_data['fields'] = data
@@ -172,9 +171,8 @@ def run(emparts,config):
 
         # only if we have values
         if pvpower is not None:
-            for f in pvfields.split(','):
-                fields[f] = inv.get(f, 0)
-
+            for f in pvfields:
+                fields[f] = inv.get(f)
         datapoint['tags'] = tags.copy()
         datapoint['fields'] = fields.copy()
         influx_data.append(datapoint.copy())
