@@ -123,15 +123,20 @@ def run(emparts,config):
         from features.pvdata import pv_data
 
         for inv in pv_data:
-            if inv.get("DeviceClass") == "Solar Inverter":
+            if inv.get("AC Power") is None:
+                pass
+            elif inv.get("DeviceClass") == "Solar Inverter":
                 pvpower += inv.get("AC Power")
             elif inv.get("DeviceClass") == "Battery Inverter":
                 pbattery += inv.get("AC Power")
 
-        if pvpower is None: pvpower=0
         pconsume = emparts.get('pconsume', 0)
         psupply = emparts.get('psupply', 0)
         pusage = pvpower + pconsume - psupply
+
+        if pvpower is not None:
+            phouse += pvpower
+
         data['pbattery'] = pbattery
         data['pvpower'] = pvpower
         data['pusage'] = pusage
