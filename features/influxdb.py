@@ -133,13 +133,14 @@ def run(emparts,config):
         pconsume = emparts.get('pconsume', 0)
         psupply = emparts.get('psupply', 0)
         pusage = pvpower + pconsume - psupply
-
+        phouse = pconsume - psupply + pbattery
         if pvpower is not None:
             phouse += pvpower
 
         data['pbattery'] = pbattery
         data['pvpower'] = pvpower
         data['pusage'] = pusage
+        data['phouse'] = phouse
     except:
         pass
 
