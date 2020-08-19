@@ -219,6 +219,58 @@ def run(emparts,config):
             print("InfluxDB: pv data published %s:%s" % (format(time.strftime("%H:%M:%S", time.localtime(influx_last_update))),format(points)))
 
 
+    from features.ediplugs import edi_data 
+    edimeasurement=config.get('edimeasurement')
+
+    if None in [edi_data,edimeasurement]: return
+
+    influx_data = []
+    datapoint={
+            'measurement': edimeasurement,
+            'time': now,
+            'tags': {},
+            'fields': {}
+            }
+    taglist = ['vendor', 'model', 'mac', 'name']
+    fieldlist = ['state', 'pconsume', 'aconsume']
+    tags = {}
+    fields = {}
+
+    for inv in edi_data:
+        for t in taglist:
+            tags[t] = inv.get(t)
+            inv.pop(t)
+
+        for f in fieldlist:
+            fields[f] = inv.get(f)
+
+        datapoint['tags'] = tags.copy()
+        datapoint['fields'] = fields.copy()
+        influx_data.append(datapoint.copy())
+
+    points = influx_data
+
+    #send it
+    try:
+        influx.write_points(points, time_precision='s', protocol='json')
+    except InfluxDBClientError as e:
+        if influx_debug > 0:
+            print('InfluxDBError: %s' % (format(e)))
+            print("InfluxDB failed edi data:" 
+                    + format(time.strftime("%H:%M:%S", time.localtime(influx_last_update)))
+                    + format(points)
+                    )
+        pass
+
+    else:
+        if influx_debug > 0:
+            print("InfluxDB: edi data published %s:%s" 
+                    % (format(time.strftime("%H:%M:%S", time.localtime(influx_last_update))),
+                        format(points)
+                        )
+                    )
+
+
 def stopping(emparts,config):
     pass
 
