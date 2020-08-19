@@ -187,3 +187,14 @@ registers = [
       ['251658753', 'NONE', 'NONE', 'yield total', 'kWh'],
       ['251658496', 'NONE', 'NONE', 'operationtime', ''],
       ]
+
+[FEATURE-ediplugs]
+# How frequently to send updates over (defaults to 20 sec)
+min_update=15
+#debug output
+debug=0
+
+plugs = [
+    ['host1', 'admin', '1234'],
+    ['host2', 'admin', '1234']
+    ]
