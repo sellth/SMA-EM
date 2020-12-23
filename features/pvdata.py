@@ -84,17 +84,20 @@ def run(emparts,config):
         elif device_class == "Battery Inverter":
             relevant_registers = eval(config.get('registers_batt'))
         else:
-            if (pv_debug > 1):
+            if (pv_debug > 0):
                 print("pv: unknown device class; skipping")
-            pass
+            continue
 
         mdata = get_pv_data(host, int(port), int(modbusid), relevant_registers)
         pv_data.append(mdata)
 
-    # query
-    if pv_data is None:
+    # catch no inverters case
+    if len(pv_data) == 0:
         if pv_debug > 0:
             print("PV: no data" )
+
+    # remove None elements
+    pv_data = [x for x in pv_data if x is not None]
 
     timestamp = time.time()
     for i in pv_data:
