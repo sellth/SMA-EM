@@ -67,7 +67,7 @@ def run(emparts,config):
     password = config.get('password',None )
     mesurement= config.get('measurement','SMAEM' )
     fields = config.get('fields', 'pconsume,psupply')
-    pvfields=eval(config.get('pvfields'))
+    pvfields = config.get('pvfields').split(',')
     influx=None
     #connect to db, create one if needed
     try:
